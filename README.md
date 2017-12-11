@@ -8,3 +8,4 @@ Group members:
 - Cory Knapp
 - Tamara von Glehn
 - Noam Zeilberger
+- Jonathan Weinberger
