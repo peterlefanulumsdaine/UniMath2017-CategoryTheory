@@ -31,9 +31,9 @@ Definition FL_category : UU
 Definition CompCat : Type.
 Admitted.
 
-Definition CompCat_to_FLCat : FLCat -> CompCat.
+Definition CompCat_to_FLCat : FL_category -> CompCat.
 Admitted.
 
-Definition FLCat_to_FLCat : CompCat -> FLCat.
+Definition FLCat_to_FLCat : CompCat -> FL_category.
 Admitted.
 
