@@ -14,7 +14,7 @@ Section FiniteLimits.
   Definition isfinite (G : graph) : hProp
     := hconj (isfinite (vertex G))
              (∀ x y : vertex G, isfinite (edge x y)).
-
+  
   (* TODO: add annotation upstream to put [graph] into [UU] (is currently in [Type]). *)
   Definition finite_graph : UU
     := ∑ G : graph, isfinite G.
@@ -31,7 +31,9 @@ End FiniteLimits.
 
 Definition FL_category : UU
   := ∑ C : category, Finite_Lims C.
-(* Note: we assume finite-limit categories are given with _chosen_ finite limits.  For univalent categories, this should be equivalent to just assuming finite limits exist [has_Finite_Lims] by uniqueness of limits, but for general categories, the “chosen” version seems to be more natural.  *)
+(* Note: we assume finite-limit categories are given with _chosen_ finite limits.  For univalent 
+categories, this should be equivalent to just assuming finite limits exist [has_Finite_Lims] by 
+uniqueness of limits, but for general categories, the “chosen” version seems to be more natural.  *)
 
 (* I can't find the definition of cartesian functor in the library... this is a place holder *)
 
@@ -41,9 +43,9 @@ Admitted.
 Definition CompCat : UU
    := ∑(C : category) (E : fibration C), cartesian_functor (pr1 E) (disp_codomain C).
 
-Definition CompCat_to_FLCat : FL_category -> CompCat.
+Definition FLCat_to_CompCat : FL_category -> CompCat.
 Admitted.
 
-Definition FLCat_to_FLCat : CompCat -> FL_category.
+Definition CompCat_to_FLCat : CompCat -> FL_category.
 Admitted.
 
