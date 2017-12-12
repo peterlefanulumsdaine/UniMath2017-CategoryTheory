@@ -22,7 +22,7 @@ Section Finite_Limits.
   (* TODO: add annotation upstream to put [graph] into [UU] (is currently in [Type]). *)
   Definition finite_graph : UU
     := ∑ G : graph, isfinite G.
- (* Note: if this errors, check you are invoking Coq with '-type-in-type'. *)
+  (* Note: if this errors, check you are invoking Coq with '-type-in-type'. *)
   Coercion graph_of_finite_graph := (fun G => pr1 G) : finite_graph -> graph.
   
   Definition Finite_Lims (C : precategory) : UU
@@ -32,12 +32,39 @@ Section Finite_Limits.
     := ∀ (g : finite_graph) (d : diagram g C), ishinh (LimCone d).
 
   Lemma pullback_graph_finite : isfinite pullback_graph.
-    Admitted.
+  Proof.
+    use dirprodpair.
+    - simpl vertex.
+      assert (three_is_finite : FiniteSets.isfinite three);
+        apply isfinitestn.
+
+    -
+      use (three_rec_dep (λ x,
+                          (forall y,
+                              FiniteSets.isfinite
+                                (@edge pullback_graph x y)))).
+      + use (three_rec_dep
+               (λ y, FiniteSets.isfinite
+                       (@edge pullback_graph (stnpr 0) y))).
+        apply isfiniteempty.
+        apply isfiniteunit.
+        apply isfiniteempty.
+      + use (three_rec_dep
+               (λ y, FiniteSets.isfinite
+                       (@edge pullback_graph (stnpr 1) y)));
+          apply isfiniteempty.
+      + use (three_rec_dep
+               (λ y, FiniteSets.isfinite
+                       (@edge pullback_graph (stnpr 2) y))).
+        apply isfiniteempty.
+        apply isfiniteunit.
+        apply isfiniteempty.
+  Defined.
 
   Lemma Limit_From_Finite_Lims {C : precategory} (H : Finite_Lims C) {g : graph} (hg : isfinite g) (d : diagram g C) : LimCone d.
   Proof.
     exact (H (g ,, hg) d).
-    Defined.
+  Defined.
   
   Lemma Pullbacks_from_Finite_Lims (C : precategory) : Finite_Lims C -> Pullbacks C.
   Proof.
@@ -48,15 +75,15 @@ Section Finite_Limits.
     use Limit_From_Finite_Lims.
     assumption.
     use pullback_graph_finite.
-    Defined.
+  Defined.
 
 End Finite_Limits.
 
 Section Finite_Limit_Categories.
 
-Definition Finite_Limit_Category : UU
-  := ∑ C : category, Finite_Lims C.
-(* Note: we assume finite-limit categories are given with _chosen_ finite limits.  For univalent categories, this should be equivalent to just assuming finite limits exist [has_Finite_Lims] by uniqueness of limits, but for general categories, the “chosen” version seems to be more natural.  *)
+  Definition Finite_Limit_Category : UU
+    := ∑ C : category, Finite_Lims C.
+  (* Note: we assume finite-limit categories are given with _chosen_ finite limits.  For univalent categories, this should be equivalent to just assuming finite limits exist [has_Finite_Lims] by uniqueness of limits, but for general categories, the “chosen” version seems to be more natural.  *)
 
 End Finite_Limit_Categories.
 
