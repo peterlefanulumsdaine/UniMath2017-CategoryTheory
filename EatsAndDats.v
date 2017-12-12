@@ -40,7 +40,6 @@ Definition Finite_Limit_Category : UU
 End Finite_Limit_Categories.
 
 Section Comprehension_Categories.
-  (* I can't find the definition of cartesian functor in the library... this is a place holder *)
 
   Definition preserves_cartesianness
              {C C' : category}

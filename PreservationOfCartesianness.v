@@ -14,6 +14,8 @@ Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
 Require Import UniMath.CategoryTheory.DisplayedCats.Equivalences_bis.
 
 
+
+
 Definition preserves_cartesianness
            {C C' : category}
            {F : functor C C'}
