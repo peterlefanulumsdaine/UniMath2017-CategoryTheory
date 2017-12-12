@@ -46,17 +46,6 @@ Definition Finite_Limit_Category : UU
 End Finite_Limit_Categories.
 
 Section Comprehension_Categories.
-
-  Definition preserves_cartesianness
-             {C C' : category}
-             {F : functor C C'}
-             {D} {D'}
-             (FF : disp_functor F D D') : UU
-    :=
-      ∏ (c c' : C) (f : C⟦c, c'⟧)
-        (d : D c) (d' : D c')
-        (ff : d -->[f] d'),
-      is_cartesian ff -> is_cartesian (#FF ff).
   
   Definition CompCat : UU
     := ∑(C : category), comprehension_cat_structure C.
@@ -65,10 +54,10 @@ End Comprehension_Categories.
 
 Section FLCat_to_CompCat.
   
-  Definition codomain_fibration : ∏ (C : category), Pullbacks C -> fibration C.
+  Definition codomain_fibration : ∏ (C : category),
+                                  Pullbacks C -> cleaving (disp_codomain C).
   Proof.
     intros C pb.
-    exists (disp_codomain C).
     intros c c' f d.
     assert (p : Pullback _ (pr2 d) f) by (apply pb).
     exists (lim p ,, PullbackPr2 _ p).
@@ -82,14 +71,15 @@ Section FLCat_to_CompCat.
   Definition FLCat_to_CompCat : Finite_Limit_Category -> CompCat.
   Proof.
     intro F.
-    exists (pr1 F).
-    exists (codomain_fibration (pr1 F) (Pullbacks_from_Finite_Lims (pr1 F) (pr2 F))).
+    set (C := pr1 F).
+    exists C.
+    exists (disp_codomain C).
+    exists (codomain_fibration C (Pullbacks_from_Finite_Lims C (pr2 F))).
     use tpair.
     - apply disp_functor_identity.
-    - simpl.
-      intros c c' f d d' ff H.
+    - intros c c' f d d' ff H.
       exact H.
-  Defined.  
+  Defined.
 
 End FLCat_to_CompCat.
 
