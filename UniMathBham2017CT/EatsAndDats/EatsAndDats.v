@@ -31,9 +31,24 @@ Section Finite_Limits.
   Definition has_Finite_Lims (C : precategory) : UU
     := ∀ (g : finite_graph) (d : diagram g C), ishinh (LimCone d).
 
+  Lemma pullback_graph_finite : isfinite pullback_graph.
+    Admitted.
+
+  Lemma Limit_From_Finite_Lims {C : precategory} (H : Finite_Lims C) {g : graph} (hg : isfinite g) (d : diagram g C) : LimCone d.
+  Proof.
+    exact (H (g ,, hg) d).
+    Defined.
+  
   Lemma Pullbacks_from_Finite_Lims (C : precategory) : Finite_Lims C -> Pullbacks C.
   Proof.
-    Admitted.
+    intro H.
+    unfold Pullbacks.
+    intros a b c f g.
+    unfold Pullback.
+    use Limit_From_Finite_Lims.
+    assumption.
+    use pullback_graph_finite.
+    Defined.
 
 End Finite_Limits.
 
@@ -46,7 +61,11 @@ Definition Finite_Limit_Category : UU
 End Finite_Limit_Categories.
 
 Section Comprehension_Categories.
+<<<<<<< Updated upstream
   
+=======
+
+>>>>>>> Stashed changes
   Definition CompCat : UU
     := ∑(C : category), comprehension_cat_structure C.
   
