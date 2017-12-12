@@ -10,6 +10,7 @@ Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
 Require Import UniMath.CategoryTheory.functor_categories.
 Require Import UniMath.CategoryTheory.DisplayedCats.Codomain.
 Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
+Require Import TypeTheory.Displayed_Cats.ComprehensionC.
 
 Section Finite_Limits.
 
@@ -58,7 +59,7 @@ Section Comprehension_Categories.
       is_cartesian ff -> is_cartesian (#FF ff).
   
   Definition CompCat : UU
-    := ∑(C : category) (E : fibration C) (F : disp_functor (functor_identity C) (pr1 E) (disp_codomain C)), preserves_cartesianness F.
+    := ∑(C : category), comprehension_cat_structure C.
   
 End Comprehension_Categories.
 
