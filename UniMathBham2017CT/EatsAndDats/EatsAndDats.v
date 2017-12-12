@@ -61,11 +61,7 @@ Definition Finite_Limit_Category : UU
 End Finite_Limit_Categories.
 
 Section Comprehension_Categories.
-<<<<<<< Updated upstream
-  
-=======
 
->>>>>>> Stashed changes
   Definition CompCat : UU
     := ∑(C : category), comprehension_cat_structure C.
   
