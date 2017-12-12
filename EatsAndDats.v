@@ -4,6 +4,7 @@ Require Import UniMath.Combinatorics.FiniteSets.
 Require Import UniMath.CategoryTheory.Categories.
 Require Import UniMath.CategoryTheory.limits.graphs.colimits.
 Require Import UniMath.CategoryTheory.limits.graphs.limits.
+Require Import UniMath.CategoryTheory.DisplayedCats.Core.
 Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
 Require Import UniMath.CategoryTheory.functor_categories.
 Require Import UniMath.CategoryTheory.DisplayedCats.Codomain.
@@ -32,8 +33,13 @@ Definition FL_category : UU
   := ∑ C : category, Finite_Lims C.
 (* Note: we assume finite-limit categories are given with _chosen_ finite limits.  For univalent categories, this should be equivalent to just assuming finite limits exist [has_Finite_Lims] by uniqueness of limits, but for general categories, the “chosen” version seems to be more natural.  *)
 
-Definition CompCat : Type.
+(* I can't find the definition of cartesian functor in the library... this is a place holder *)
+
+Definition cartesian_functor {C : category} (E F : disp_cat C) : UU.
 Admitted.
+
+Definition CompCat : UU
+   := ∑(C : category) (E : fibration C), cartesian_functor (pr1 E) (disp_codomain C).
 
 Definition CompCat_to_FLCat : FL_category -> CompCat.
 Admitted.
