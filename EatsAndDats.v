@@ -16,7 +16,7 @@ Section Finite_Limits.
   Definition isfinite (G : graph) : hProp
     := hconj (isfinite (vertex G))
              (∀ x y : vertex G, isfinite (edge x y)).
-
+  
   (* TODO: add annotation upstream to put [graph] into [UU] (is currently in [Type]). *)
   Definition finite_graph : UU
     := ∑ G : graph, isfinite G.
@@ -42,11 +42,20 @@ End Finite_Limit_Categories.
 Section Comprehension_Categories.
   (* I can't find the definition of cartesian functor in the library... this is a place holder *)
 
-  Definition cartesian_functor {C : category} (E F : disp_cat C) : UU.
-  Admitted.
-
+  Definition preserves_cartesianness
+             {C C' : category}
+             {F : functor C C'}
+             {D} {D'}
+             (FF : disp_functor F D D') : UU
+    :=
+      ∏ (c c' : C) (f : C⟦c, c'⟧)
+        (d : D c) (d' : D c')
+        (ff : d -->[f] d'),
+      is_cartesian ff -> is_cartesian (#FF ff).
+  
   Definition CompCat : UU
-    := ∑(C : category) (E : fibration C), cartesian_functor (pr1 E) (disp_codomain C).
+    := ∑(C : category) (E : fibration C) (F : disp_functor (functor_identity C) (pr1 E) (disp_codomain C)), preserves_cartesianness F.
+  
 End Comprehension_Categories.
 
 Section FLCat_to_CompCat.
@@ -58,5 +67,3 @@ Section CompCat_to_FLCat.
   Definition CompCat_to_FLCat : CompCat -> Finite_Limit_Category.
   Admitted.
 End CompCat_to_FLCat.
-
-
