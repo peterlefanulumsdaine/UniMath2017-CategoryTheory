@@ -35,13 +35,19 @@ Definition FL_category : UU
 categories, this should be equivalent to just assuming finite limits exist [has_Finite_Lims] by 
 uniqueness of limits, but for general categories, the “chosen” version seems to be more natural.  *)
 
-(* I can't find the definition of cartesian functor in the library... this is a place holder *)
-
-Definition cartesian_functor {C : category} (E F : disp_cat C) : UU.
-Admitted.
+Definition preserves_cartesianness
+           {C C' : category}
+           {F : functor C C'}
+           {D} {D'}
+           (FF : disp_functor F D D') : UU
+  :=
+    ∏ (c c' : C) (f : C⟦c, c'⟧)
+      (d : D c) (d' : D c')
+      (ff : d -->[f] d'),
+    is_cartesian ff -> is_cartesian (#FF ff).
 
 Definition CompCat : UU
-   := ∑(C : category) (E : fibration C), cartesian_functor (pr1 E) (disp_codomain C).
+   := ∑(C : category) (E : fibration C) (F : disp_functor (functor_identity C) (pr1 E) (disp_codomain C)), preserves_cartesianness F.
 
 Definition FLCat_to_CompCat : FL_category -> CompCat.
 Admitted.
