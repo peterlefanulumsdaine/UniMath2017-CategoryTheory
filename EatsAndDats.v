@@ -10,7 +10,9 @@ Require Import UniMath.CategoryTheory.functor_categories.
 Require Import UniMath.CategoryTheory.DisplayedCats.Codomain.
 Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
 
-Section FiniteLimits.
+Section Finite_Limits.
+
+  (* Note: name chosen for consistency with [UniMath.Combinatorics.FiniteSets.isfinite] *)
   Definition isfinite (G : graph) : hProp
     := hconj (isfinite (vertex G))
              (∀ x y : vertex G, isfinite (edge x y)).
@@ -27,23 +29,34 @@ Section FiniteLimits.
   Definition has_Finite_Lims (C : precategory) : UU
     := ∀ (g : finite_graph) (d : diagram g C), ishinh (LimCone d).
 
-End FiniteLimits.
+End Finite_Limits.
 
-Definition FL_category : UU
+Section Finite_Limit_Categories.
+
+Definition Finite_Limit_Category : UU
   := ∑ C : category, Finite_Lims C.
 (* Note: we assume finite-limit categories are given with _chosen_ finite limits.  For univalent categories, this should be equivalent to just assuming finite limits exist [has_Finite_Lims] by uniqueness of limits, but for general categories, the “chosen” version seems to be more natural.  *)
 
-(* I can't find the definition of cartesian functor in the library... this is a place holder *)
+End Finite_Limit_Categories.
 
-Definition cartesian_functor {C : category} (E F : disp_cat C) : UU.
-Admitted.
+Section Comprehension_Categories.
+  (* I can't find the definition of cartesian functor in the library... this is a place holder *)
 
-Definition CompCat : UU
-   := ∑(C : category) (E : fibration C), cartesian_functor (pr1 E) (disp_codomain C).
+  Definition cartesian_functor {C : category} (E F : disp_cat C) : UU.
+  Admitted.
 
-Definition CompCat_to_FLCat : FL_category -> CompCat.
-Admitted.
+  Definition CompCat : UU
+    := ∑(C : category) (E : fibration C), cartesian_functor (pr1 E) (disp_codomain C).
+End Comprehension_Categories.
 
-Definition FLCat_to_FLCat : CompCat -> FL_category.
-Admitted.
+Section FLCat_to_CompCat.
+  Definition FLCat_to_CompCat : Finite_Limit_Category -> CompCat.
+  Admitted.
+End FLCat_to_CompCat.
+
+Section CompCat_to_FLCat.
+  Definition CompCat_to_FLCat : CompCat -> Finite_Limit_Category.
+  Admitted.
+End CompCat_to_FLCat.
+
 
