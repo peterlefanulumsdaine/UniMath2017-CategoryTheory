@@ -4,6 +4,7 @@ Require Import UniMath.Combinatorics.FiniteSets.
 Require Import UniMath.CategoryTheory.Categories.
 Require Import UniMath.CategoryTheory.limits.graphs.colimits.
 Require Import UniMath.CategoryTheory.limits.graphs.limits.
+Require Import UniMath.CategoryTheory.limits.graphs.pullbacks.
 Require Import UniMath.CategoryTheory.DisplayedCats.Core.
 Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
 Require Import UniMath.CategoryTheory.functor_categories.
@@ -28,6 +29,10 @@ Section Finite_Limits.
 
   Definition has_Finite_Lims (C : precategory) : UU
     := ∀ (g : finite_graph) (d : diagram g C), ishinh (LimCone d).
+
+  Lemma Pullbacks_from_Finite_Lims (C : precategory) : Finite_Lims C -> Pullbacks C.
+  Proof.
+    Admitted.
 
 End Finite_Limits.
 
@@ -58,8 +63,33 @@ Section Comprehension_Categories.
 End Comprehension_Categories.
 
 Section FLCat_to_CompCat.
+  
+  Definition codomain_fibration : ∏ (C : category), Pullbacks C -> fibration C.
+  Proof.
+    intros C pb.
+    exists (disp_codomain C).
+    intros c c' f d.
+    assert (p : Pullback _ (pr2 d) f) by (apply pb).
+    exists (lim p ,, PullbackPr2 _ p).
+    exists ((PullbackPr1 _ p ,, PullbackSqrCommutes _ p)).
+    apply isPullback_cartesian_in_cod_disp.
+    apply equiv_isPullback_2.
+    exact (pr2 C).
+    apply (isPullback_Pullback C (pr2 C) p).
+  Defined.
+
   Definition FLCat_to_CompCat : Finite_Limit_Category -> CompCat.
-  Admitted.
+  Proof.
+    intro F.
+    exists (pr1 F).
+    exists (codomain_fibration (pr1 F) (Pullbacks_from_Finite_Lims (pr1 F) (pr2 F))).
+    use tpair.
+    - apply disp_functor_identity.
+    - simpl.
+      intros c c' f d d' ff H.
+      exact H.
+  Defined.  
+
 End FLCat_to_CompCat.
 
 Section CompCat_to_FLCat.
