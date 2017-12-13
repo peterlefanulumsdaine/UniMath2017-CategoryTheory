@@ -26,14 +26,14 @@ Let G := right_functor A.
 Let FF : disp_functor F D D' := left_adj_over X.
 Let GG : disp_functor G D' D := right_adj_over X.
 
-Section DispHomSetIso_from_Adjunction.
-
-  Let η : functor_identity C ⟹ F ∙ G := adjunit A.
-  Let ε : G ∙ F ⟹ functor_identity C' := adjcounit A.
-  Let ηη : disp_nat_trans η (disp_functor_identity D) (disp_functor_composite FF GG)
+Let η : functor_identity C ⟹ F ∙ G := adjunit A.
+Let ε : G ∙ F ⟹ functor_identity C' := adjcounit A.
+Let ηη : disp_nat_trans η (disp_functor_identity D) (disp_functor_composite FF GG)
     := unit_over X.
-  Let εε : disp_nat_trans ε (disp_functor_composite GG FF) (disp_functor_identity D')
+Let εε : disp_nat_trans ε (disp_functor_composite GG FF) (disp_functor_identity D')
     := counit_over X.
+
+Section DispHomSetIso_from_Adjunction.
 
   Definition homset_conj_inv {c : C} {c' : C'} (g : C⟦c, G c'⟧)
              (d : D c) (d' : D' c') :
@@ -137,9 +137,17 @@ Proof.
   intros c c' f d d' ff ff_cart.
   intros c'' g d'' h.
   unfold is_cartesian in ff_cart.
-  eapply iscontrweqb. 
-    
-  (** Path to happiness:
+  eapply iscontrweqb.
+  set (gconj := (# F g) · (ε c')).
+  simpl in gconj.
+  set (m := homset_conj_inv _ _ _ h).
+  assert (eq :  # F (g · # G f) · ε c = # F g · (ε c') · f).
+  - rewrite functor_comp.
+    rewrite <- assoc.
+    replace  (# F (# G f)) with (# (G ∙ F) f).
+    (* Stuck again: same problem as before. *)
+    (*rewrite (nat_trans_ax ε _ _ f). *)
+(** Path to happiness:
 
 - construct homset-isomorphisms defined by a displayed adjunction;
   in particular,
