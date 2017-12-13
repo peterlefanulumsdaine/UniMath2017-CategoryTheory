@@ -123,7 +123,9 @@ Section FLCat_to_CompCat.
       exact H.
   Defined.
 
-End FLCat_to_CompCat.
+End FLCat_to
+      exit
+      CompCat.
 
 Section CompCat_to_FLCat.
   Definition CompCat_to_FLCat : CompCat -> Finite_Limit_Category.
