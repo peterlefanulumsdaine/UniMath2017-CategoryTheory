@@ -10,7 +10,7 @@ Require Import UniMath.CategoryTheory.DisplayedCats.Core.
 Require Import UniMath.CategoryTheory.DisplayedCats.Constructions.
 Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
 
-Require Import UniMath.CategoryTheory.DisplayedCats.Equivalences_bis.
+Require Import UniMath.CategoryTheory.DisplayedCats.Equivalences.
 Require Import TypeTheory.Displayed_Cats.ComprehensionC.
 
 Section fix_disp_adjunction.
@@ -50,11 +50,10 @@ Section DispHomSetIso_from_Adjunction.
   intro beta.
   set (gamma := comp_disp (ηη _ _) (# GG beta)). 
   simpl in gamma.
-  (*
   assert (equiv : η c · # G (# F g · ε c') = g) by
       exact (φ_adj_after_φ_adj_inv A g).
-  exact (transportf _ equiv gamma). *)
-  exact (transportf _ (φ_adj_after_φ_adj_inv A g) gamma).
+  exact (transportf _ equiv gamma).
+  (*exact (transportf _ (φ_adj_after_φ_adj_inv A g) gamma).*)
   Defined.
 
   Lemma homset_conj_inv_after_conj {c : C} {c' : C'} (g : C⟦c, G c'⟧)
@@ -66,36 +65,47 @@ Section DispHomSetIso_from_Adjunction.
     unfold homset_conj.
     unfold homset_conj_inv.
     rewrite (disp_functor_transportf).
-    assert (S: # FF (ηη c d;; # GG beta) = transportb _ (functor_comp F _ _) (# FF (ηη c d);;# FF (# GG beta))) by (apply disp_functor_comp).
-    intermediate_path (transportf (mor_disp (FF c d) (FF (G c') (GG c' d')))
-    (maponpaths (# F)%Cat (φ_adj_after_φ_adj_inv A g)) 
-    (transportb _ (functor_comp F _ _) (# FF (ηη c d);;# FF (# GG beta)));; εε c' d').
-    - simpl.
-      rewrite S.
-      rewrite (disp_functor_comp FF (ηη c d) (# GG beta)). 
-  Admitted.
-    (* Stuck! Error: Found no subterm matching "# FF (ηη c d;; # GG beta)" in the current goal. *)
-    (* Old attempts: 
-    rewrite (disp_functor_comp FF (ηη c d) (# GG beta)). 
-    assert (S: # FF (ηη c d;; # GG beta) = transportb _ (functor_comp F _ _) (# FF (ηη c d);;# FF (# GG beta))).
-    apply (disp_functor_comp).
-    rewrite S.
     rewrite (mor_disp_transportf_postwhisker).
-    simpl.
+    rewrite (disp_functor_comp).
     unfold transportb.
     rewrite (mor_disp_transportf_postwhisker).
     rewrite (assoc_disp_var).
     simpl.
-    assert (S : # FF (# GG beta) = (# (disp_functor_composite GG FF) beta))
-      by (apply idpath).
-    rewrite S.
-    rewrite (disp_nat_trans_ax εε beta).
-    assert ((# FF (ηη c d);; (# FF (# GG beta);; εε c' d'))  = ((# FF (ηη c d);; (# (disp_functor_composite GG FF) beta) ;;  εε c' d'))). 
+    rewrite 2 transport_f_f.
+    intermediate_path ( transportf (mor_disp (FF c d) d')
+    (assoc ((# F)%Cat (η c)) ((# F)%Cat ((# G)%Cat ((# F)%Cat g · ε c'))) (ε c') @
+     cancel_postcomposition
+       ((# F)%Cat (η c) · (# F)%Cat ((# G)%Cat ((# F)%Cat g · ε c')))
+       ((# F)%Cat (η c · (# G)%Cat ((# F)%Cat g · ε c'))) 
+       (ε c') (! functor_comp F (η c) ((# G)%Cat ((# F)%Cat g · ε c'))) @
+     cancel_postcomposition ((# F)%Cat (η c · (# G)%Cat ((# F)%Cat g · ε c')))
+       ((# F)%Cat g) (ε c') (maponpaths (# F)%Cat (φ_adj_after_φ_adj_inv A g)))
+    (# FF (ηη c d);; ((# (disp_functor_composite GG FF) beta);; εε c' d'))).
     apply idpath.
-    Check (# FF (# GG beta)).
-    unfold comp_disp.
-    rewrite X0.
-    rewrite (disp_nat_trans_ax εε beta). *)
+    rewrite (disp_nat_trans_ax εε beta).
+    simpl.
+    unfold transportb.
+    rewrite (mor_disp_transportf_prewhisker).
+    rewrite (assoc_disp).
+    rewrite (transport_f_f).
+    rewrite (transport_f_b).
+    assert (Tri : # FF (ηη c d);; εε (F c) (FF c d) = transportb _ (triangle_id_left_ad A c ) (id_disp _)).
+    exact ((pr1 (pr2 X)) c d).
+    simpl in Tri.
+    rewrite Tri.
+    unfold transportb.
+    rewrite (mor_disp_transportf_postwhisker).
+    rewrite id_left_disp.
+    unfold transportb.
+    rewrite transport_f_f.
+    rewrite transport_f_f.
+    intermediate_path (transportf _ (idpath _) beta).
+    apply (Auxiliary.transportf_ext).
+    apply proofirrelevance.
+    Print has_homsets.
+    apply (pr2 C').
+    apply idpath.
+Defined.
     
 (* Alternative symmetric definition : *)
     (* Definition homset_conj {c : C} {c' : C'} (f : C'⟦F c, c'⟧) *)
