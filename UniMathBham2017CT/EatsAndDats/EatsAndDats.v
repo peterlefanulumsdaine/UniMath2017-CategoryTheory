@@ -8,8 +8,10 @@ Require Import UniMath.CategoryTheory.limits.graphs.pullbacks.
 Require Import UniMath.CategoryTheory.DisplayedCats.Core.
 Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
 Require Import UniMath.CategoryTheory.functor_categories.
+Require Import UniMath.CategoryTheory.covyoneda.
 Require Import UniMath.CategoryTheory.DisplayedCats.Codomain.
 Require Import UniMath.CategoryTheory.DisplayedCats.Fibrations.
+
 Require Import TypeTheory.Displayed_Cats.ComprehensionC.
 
 Section Finite_Limits.
@@ -87,10 +89,49 @@ Section Finite_Limit_Categories.
 
 End Finite_Limit_Categories.
 
+
+Section Filtered_Categories.
+
+  Definition Diags_Have_Cocones (C : precategory) : UU
+    := ∏ (g : finite_graph) (d : diagram g C), ishinh(∑(c:C), cocone d c).
+
+  Definition filtered_category : UU := ∑ C : precategory, Diags_Have_Cocones C.
+
+(* TODO: Do we need chosen cocones or is mere existence sufficient? Supposedly the latter is enough. This should be formalized
+at some point, i.e. prove that already with the truncated notion,
+for finite sets X we actually have colim (X, Yi) = Hom(X, colim Yi) *)
+
+  Definition FilteredColims (C : precategory) : UU
+    := ∑ (J : filtered_category) (F: functor (pr1 J) C), ColimCocone (diagram_from_functor (pr1 J) C F).
+
+  Definition hasFilteredColims (C : precategory) : UU
+    := ∏ (J : filtered_category) (F: functor (pr1 J) C), ishinh(ColimCocone (diagram_from_functor (pr1 J) C F)).
+
+  Definition preserves_filtered_colimits {C D : precategory}(F : functor C D) : UU
+   :=  ∏ (X : FilteredColims C),
+
+    let J := (pr1 (pr1 X)) in
+    let G := (pr1 (pr2 X)) in
+    let g := (graph_from_precategory (pr1 (pr1 X))) in
+    let d := (diagram_from_functor J C G) in
+    let CC := (pr2 (pr2 X)) in
+    let cc := (pr2 (pr1 CC)) in
+    let L := colim CC in
+      isColimCocone d L cc -> isColimCocone (mapdiagram F d) (F L) (mapcocone F d cc).
+
+  Definition FilteredColimsCategory : UU := ∑ (C : category), hasFilteredColims C.
+
+  Definition isFinitelyPresentableObject {C : category} (x : ob C): UU := preserves_filtered_colimits(covyoneda C (homset_property C) x).
+
+  Definition finitely_presentable_object (C : category) : UU := ∑ (x : ob C), isFinitelyPresentableObject x.
+
+End Filtered_Categories.
+
 Section Comprehension_Categories.
 
   Definition CompCat : UU
     := ∑(C : category), comprehension_cat_structure C.
+
   
 End Comprehension_Categories.
 
