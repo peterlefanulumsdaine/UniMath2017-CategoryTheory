@@ -217,12 +217,58 @@ Proof.
     set (H := ff_cart _ _ _ m).
     apply (@iscontrweqb _
             (∑ gg : FF c'' d'' -->[ # F g · ε c'] d', (gg;; ff)%mor_disp = m)).
-    (* not sure best way to proceed here... *)
+(*    Search (_ -> weq (total2 _) (total2 _)). (* brilliant tip via Benedikt *) *)
+    apply (weqbandf (dispadjunction_hom_weq _ _ g _ _)).
+    intro gg.
+    simpl.
+    unfold m.
+    unfold homset_conj_inv.
+    Search (isaprop _ -> _ -> weq _ _).
+    apply weqimplimpl.
+    intro p.
+    rewrite <- p.
+    rewrite (disp_functor_comp). 
+    unfold transportb.
+    rewrite (mor_disp_transportf_postwhisker).
+    rewrite 2 (assoc_disp_var).
+    simpl.
+    intermediate_path (transportf (mor_disp (FF c'' d'') d) eq
+    (transportf (mor_disp (FF c'' d'') d)
+       (cancel_postcomposition (# F g · # F (# G f))
+          (# F (g · # G f)) (ε c)
+          (! functor_comp F g (# G f)))
+       (transportf (mor_disp (FF c'' d'') d)
+          (assoc ((# F)%Cat g) ((# F)%Cat ((# G)%Cat f)) (ε c))
+          (# FF gg;; ((# (disp_functor_composite GG FF) ff);; εε c d)))%mor_disp)).
+    rewrite (disp_nat_trans_ax εε ff).
+    simpl.
+    unfold transportb.
+    rewrite (mor_disp_transportf_prewhisker).
+    rewrite transport_f_f.
+    rewrite transport_f_f.
+    rewrite transport_f_f.
+    apply (Auxiliary.transportf_ext).
+    apply proofirrelevance.
+    apply (pr2 C').
+    apply idpath.
 
-    rewrite (weqtopaths (dispadjunction_hom_weq _ _ g _ _)).
-      (d -->[g] GG _ d') ≃ (FF _ d -->[# F g · adjcounit A _] d').
+    intro p.
+    (* almost there...*)
+    rewrite <- (disp_nat_trans_ax εε (# GG ff)).
 
-(c : C) (c' : C') (g : C⟦c, G c'⟧) (d : D c) (d' : D' c')
+(# FF gg;; εε c' d';; ff)%mor_disp =
+  transportf (mor_disp (FF c'' d'') d) eq
+    (# FF h;; εε c d)%mor_disp
+
+(# FF gg;; GG FF ff; εε c' d')%mor_disp =
+
+GG (# FF gg;; εε c' d';; ff)%mor_disp =
+GG  transportf (mor_disp (FF c'' d'') d) eq
+    (# FF h;; εε c d)%mor_disp
+
+GG FF gg; GG eps ... ;; GG ff
+g '' GG f
+
 
 
     apply eqweqmap.
