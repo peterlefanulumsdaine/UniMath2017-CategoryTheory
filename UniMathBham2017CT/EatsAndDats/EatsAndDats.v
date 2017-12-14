@@ -112,7 +112,7 @@ for finite sets X we actually have colim (X, Yi) = Hom(X, colim Yi) *)
 
     let J := (pr1 (pr1 X)) in
     let G := (pr1 (pr2 X)) in
-    let g := (graph_from_precategory (pr1 (pr1 X))) in
+    let g := (graph_from_precategory J) in
     let d := (diagram_from_functor J C G) in
     let CC := (pr2 (pr2 X)) in
     let cc := (pr2 (pr1 CC)) in
