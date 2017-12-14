@@ -66,7 +66,13 @@ Section DispHomSetIso_from_Adjunction.
     unfold homset_conj.
     unfold homset_conj_inv.
     rewrite (disp_functor_transportf).
-    Check (# FF (ηη c d;; # GG beta)).
+    assert (S: # FF (ηη c d;; # GG beta) = transportb _ (functor_comp F _ _) (# FF (ηη c d);;# FF (# GG beta))) by (apply disp_functor_comp).
+    intermediate_path (transportf (mor_disp (FF c d) (FF (G c') (GG c' d')))
+    (maponpaths (# F)%Cat (φ_adj_after_φ_adj_inv A g)) 
+    (transportb _ (functor_comp F _ _) (# FF (ηη c d);;# FF (# GG beta)));; εε c' d').
+    - simpl.
+      rewrite S.
+      rewrite (disp_functor_comp FF (ηη c d) (# GG beta)). 
   Admitted.
     (* Stuck! Error: Found no subterm matching "# FF (ηη c d;; # GG beta)" in the current goal. *)
     (* Old attempts: 
@@ -137,16 +143,23 @@ Proof.
   intros c c' f d d' ff ff_cart.
   intros c'' g d'' h.
   unfold is_cartesian in ff_cart.
-  eapply iscontrweqb.
-  set (gconj := (# F g) · (ε c')).
-  simpl in gconj.
-  set (m := homset_conj_inv _ _ _ h).
   assert (eq :  # F (g · # G f) · ε c = # F g · (ε c') · f).
   - rewrite functor_comp.
     rewrite <- assoc.
-    replace  (# F (# G f)) with (# (G ∙ F) f).
-    (* Stuck again: same problem as before. *)
-    (*rewrite (nat_trans_ax ε _ _ f). *)
+    intermediate_path (# F g · ((# (G ∙ F) f) · ε c)).
+    apply idpath.
+    rewrite (nat_trans_ax ε _ _ f).
+    simpl.
+    rewrite assoc.
+    apply idpath.  
+  - set (m := transportf _ eq (homset_conj_inv _ _ _ h)).
+    set (H := ff_cart _ _ _ m).
+    apply (@iscontrweqb _
+            (∑ gg : FF c'' d'' -->[ # F g · ε c'] d', (gg;; ff)%mor_disp = m)).
+    Focus 2.    
+    exact H.
+
+
 (** Path to happiness:
 
 - construct homset-isomorphisms defined by a displayed adjunction;
