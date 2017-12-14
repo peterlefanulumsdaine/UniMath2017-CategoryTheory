@@ -253,7 +253,48 @@ Proof.
     apply idpath.
 
     intro p.
-    (* almost there...*)
+    rewrite (assoc_disp_var) in p.
+    Print id_right_disp_var.
+    rewrite (id_right_disp_var). 
+    rewrite (assoc_disp_var).
+    Print pathsinv0.
+    assert (id_disp (GG c d) = transportf _ (triangle_id_right_ad A _ ) ((ηη _ _ ;; (# GG)%mor_disp (εε _ _)) %mor_disp)).
+    apply transportf_transpose.
+    rewrite (pr2 (pr2 X)).
+    simpl.
+    apply idpath.
+    (* this is tedious... *)
+    rewrite (transportf_transpose (pathsinv0 (pr2 (pr2 X) _ _))).
+
+inv (pr2 (pr2 X))).
+((# GG)%mor_disp ff)).
+
+    rewrite (disp_nat_trans_ax_var εε ff) in p.
+
+   FF gg ; eps ; ff = FF h ; eps
+   FF gg ; FF GG ff ; eps = FF h ; eps
+   FF (gg ; GG ff) ; eps = FF h ; eps
+   FF (gg ; GG ff) ; eps = FF h ; eps
+   GG FF (gg ; GG ff) ; GG eps = GG FF h ; GG eps
+   GG FF (gg ; GG ff) ; GG eps = GG FF h ; GG eps
+   eta ; GG FF (gg ; GG ff) ; GG eps = eta ; GG FF h ; GG eps
+   eta ; GG FF (gg ; GG ff) ; GG eps = h ; eta ; GG eps = h
+   eta ; GG FF (gg ; GG ff) ; GG eps = h
+   gg ; GG ff ; eta ; GG eps = h
+   gg ; GG ff ; id = h
+   gg ; GG ff = h
+
+   
+   
+   GG FF gg ; GG eps ; GG ff = GG FF h ; GG eps
+   GG FF gg ; GG (eps ; ff) =  GG FF h ; GG eps
+
+   GG FF gg ; GG (FF GG ; eps) = GG FF h ; GG eps
+   GG FF (gg ; ff) ; eps = GG FF h ; GG eps
+   eps ; gg ; ff = GG FF h ; GG eps
+   eps ; gg ; ff ; eta = GG FF h ; GG eps ; eta
+   eps ; gg ; ff ; eta = GG FF h
+
     rewrite <- (disp_nat_trans_ax εε (# GG ff)).
 
 (# FF gg;; εε c' d';; ff)%mor_disp =
