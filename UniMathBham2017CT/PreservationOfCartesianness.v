@@ -53,7 +53,6 @@ Section DispHomSetIso_from_Adjunction.
   assert (equiv : η c · # G (# F g · ε c') = g) by
       exact (φ_adj_after_φ_adj_inv A g).
   exact (transportf _ equiv gamma).
-  (*exact (transportf _ (φ_adj_after_φ_adj_inv A g) gamma).*)
   Defined.
 
 (* Alternative symmetric definition : *)
@@ -74,100 +73,50 @@ Section DispHomSetIso_from_Adjunction.
     Open Scope mor_disp.
     unfold homset_conj.
     unfold homset_conj_inv.
-    rewrite (disp_functor_transportf).
-    rewrite (mor_disp_transportf_postwhisker).
-    rewrite (disp_functor_comp).
+    rewrite disp_functor_transportf.
+    rewrite mor_disp_transportf_postwhisker.
+    rewrite disp_functor_comp.
     unfold transportb.
-    rewrite (mor_disp_transportf_postwhisker).
-    rewrite (assoc_disp_var).
+    rewrite mor_disp_transportf_postwhisker.
+    rewrite assoc_disp_var.
     simpl.
     rewrite 2 transport_f_f.
-    intermediate_path ( transportf (mor_disp (FF c d) d')
-    (assoc ((# F)%Cat (η c)) ((# F)%Cat ((# G)%Cat ((# F)%Cat g · ε c'))) (ε c') @
-     cancel_postcomposition
-       ((# F)%Cat (η c) · (# F)%Cat ((# G)%Cat ((# F)%Cat g · ε c')))
-       ((# F)%Cat (η c · (# G)%Cat ((# F)%Cat g · ε c'))) 
-       (ε c') (! functor_comp F (η c) ((# G)%Cat ((# F)%Cat g · ε c'))) @
-     cancel_postcomposition ((# F)%Cat (η c · (# G)%Cat ((# F)%Cat g · ε c')))
-       ((# F)%Cat g) (ε c') (maponpaths (# F)%Cat (φ_adj_after_φ_adj_inv A g)))
+    intermediate_path (transportf _ (assoc _ _ _ @
+           cancel_postcomposition _ _ _ (! functor_comp _ _ _) @
+           cancel_postcomposition _ _ _ (maponpaths _ (φ_adj_after_φ_adj_inv A g)))
     (# FF (ηη c d);; ((# (disp_functor_composite GG FF) beta);; εε c' d'))).
     apply idpath.
-    rewrite (disp_nat_trans_ax εε beta).
+    rewrite disp_nat_trans_ax.
     simpl.
     unfold transportb.
-    rewrite (mor_disp_transportf_prewhisker).
-    rewrite (assoc_disp).
-    rewrite (transport_f_f).
-    rewrite (transport_f_b).
-    assert (Tri : # FF (ηη c d);; εε (F c) (FF c d) = transportb _ (triangle_id_left_ad A c ) (id_disp _)).
-    exact ((pr1 (pr2 X)) c d).
-    simpl in Tri.
-    rewrite Tri.
+    rewrite mor_disp_transportf_prewhisker.
+    rewrite assoc_disp.
     unfold transportb.
-    rewrite (mor_disp_transportf_postwhisker).
+    rewrite 2 transport_f_f.
+    assert (triangle1 : # FF (ηη c d);; εε (F c) (FF c d) =
+                        transportb _ (triangle_id_left_ad A c ) (id_disp _))
+      by (exact ((pr1 (pr2 X)) c d)).
+    simpl in triangle1.
+    rewrite triangle1.
+    unfold transportb.
+    rewrite mor_disp_transportf_postwhisker.
     rewrite id_left_disp.
     unfold transportb.
-    rewrite transport_f_f.
-    rewrite transport_f_f.
+    rewrite 2 transport_f_f.
     intermediate_path (transportf _ (idpath _) beta).
-    apply (Auxiliary.transportf_ext).
+    apply maponpaths_2.
     apply proofirrelevance.
-    Print has_homsets.
     apply (pr2 C').
     apply idpath.
-Defined.
+  Defined.
+  
 (*
   Lemma homset_conj_inv_after_conj' {c : C} {c' : C'} (f : C'⟦F c, c'⟧)
         (d : D c) (d' : D' c')
         (beta : FF _ d -->[f] d') :
     transportf _ (φ_adj_inv_after_φ_adj A f) (homset_conj_inv _ _ _ (homset_conj' f d d' beta)) = beta. 
-  Proof.
-    Open Scope mor_disp.
-    unfold homset_conj.
-    unfold homset_conj_inv.
-    rewrite (disp_functor_transportf).
-    rewrite (mor_disp_transportf_postwhisker).
-    rewrite (disp_functor_comp).
-    unfold transportb.
-    rewrite (mor_disp_transportf_postwhisker).
-    rewrite (assoc_disp_var).
-    simpl.
-    rewrite 2 transport_f_f.
-    intermediate_path ( transportf (mor_disp (FF c d) d')
-    (assoc ((# F)%Cat (η c)) ((# F)%Cat ((# G)%Cat ((# F)%Cat g · ε c'))) (ε c') @
-     cancel_postcomposition
-       ((# F)%Cat (η c) · (# F)%Cat ((# G)%Cat ((# F)%Cat g · ε c')))
-       ((# F)%Cat (η c · (# G)%Cat ((# F)%Cat g · ε c'))) 
-       (ε c') (! functor_comp F (η c) ((# G)%Cat ((# F)%Cat g · ε c'))) @
-     cancel_postcomposition ((# F)%Cat (η c · (# G)%Cat ((# F)%Cat g · ε c')))
-       ((# F)%Cat g) (ε c') (maponpaths (# F)%Cat (φ_adj_after_φ_adj_inv A g)))
-    (# FF (ηη c d);; ((# (disp_functor_composite GG FF) beta);; εε c' d'))).
-    apply idpath.
-    rewrite (disp_nat_trans_ax εε beta).
-    simpl.
-    unfold transportb.
-    rewrite (mor_disp_transportf_prewhisker).
-    rewrite (assoc_disp).
-    rewrite (transport_f_f).
-    rewrite (transport_f_b).
-    assert (Tri : # FF (ηη c d);; εε (F c) (FF c d) = transportb _ (triangle_id_left_ad A c ) (id_disp _)).
-    exact ((pr1 (pr2 X)) c d).
-    simpl in Tri.
-    rewrite Tri.
-    unfold transportb.
-    rewrite (mor_disp_transportf_postwhisker).
-    rewrite id_left_disp.
-    unfold transportb.
-    rewrite transport_f_f.
-    rewrite transport_f_f.
-    intermediate_path (transportf _ (idpath _) beta).
-    apply (Auxiliary.transportf_ext).
-    apply proofirrelevance.
-    Print has_homsets.
-    apply (pr2 C').
-    apply idpath.
-  Defined.
-*)    
+ *)
+  
   Lemma homset_conj_after_conj_inv {c : C} {c' : C'} (g : C⟦c, G c'⟧)
         (d : D c) (d' : D' c')
         (alpha : d -->[g] GG _ d') :
@@ -178,16 +127,39 @@ Defined.
     rewrite disp_functor_comp.
     simpl.
     unfold transportb.
-    rewrite (mor_disp_transportf_prewhisker).
-    rewrite (assoc_disp).
-    (* Stuck again *)
-    (* rewrite (disp_nat_trans_ax_var ηη alpha). *)
-  Admitted.  
+    rewrite mor_disp_transportf_prewhisker.
+    rewrite assoc_disp.
+    unfold transportb.
+    rewrite 2 transport_f_f.
+    intermediate_path (transportf _ (! assoc _ _ _ @
+     maponpaths _ (! functor_comp _ _ _) @ φ_adj_after_φ_adj_inv A g)
+    (ηη c d;; # (disp_functor_composite FF GG) alpha ;; # GG (εε c' d'))).
+    apply idpath.
+    rewrite disp_nat_trans_ax_var.
+    simpl.
+    rewrite mor_disp_transportf_postwhisker.
+    rewrite assoc_disp_var.
+    rewrite 2 transport_f_f.
+    assert (triangle2 : (ηη (G c') (GG c' d');; # GG (εε c' d')) =
+       transportb _ (triangle_id_right_ad A c') (id_disp _)) by (exact (pr2 (pr2 X) c' d')).
+    simpl in triangle2.
+    rewrite triangle2.    
+    unfold transportb.    
+    rewrite mor_disp_transportf_prewhisker.
+    rewrite id_right_disp.
+    unfold transportb.
+    rewrite 2 transport_f_f.
+    intermediate_path (transportf _ (idpath _ ) alpha).
+    apply maponpaths_2.
+    apply proofirrelevance.
+    apply (pr2 C).
+    apply idpath.
+  Defined.
 
   Close Scope mor_disp.
   
   Lemma dispadjunction_hom_weq (c : C) (c' : C') (g : C⟦c, G c'⟧) (d : D c) (d' : D' c') :
-      (d -->[g] GG _ d') ≃ (FF _ d -->[# F g · adjcounit A _] d').
+      (d -->[g] GG _ d') ≃ (FF _ d -->[# F g · ε _] d').
   Proof.
     exists (homset_conj_inv g d d').
     apply (gradth _ (homset_conj g d d')).  
@@ -244,10 +216,8 @@ Proof.
     simpl.
     unfold transportb.
     rewrite (mor_disp_transportf_prewhisker).
-    rewrite transport_f_f.
-    rewrite transport_f_f.
-    rewrite transport_f_f.
-    apply (Auxiliary.transportf_ext).
+    rewrite 3 transport_f_f.
+    apply maponpaths_2.
     apply proofirrelevance.
     apply (pr2 C').
     apply idpath.
