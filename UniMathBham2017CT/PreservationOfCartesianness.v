@@ -207,12 +207,6 @@ Proof.
       rewrite assoc_disp_var in p.
       rewrite id_right_disp_var. 
       rewrite assoc_disp_var.
-      assert (id_disp (GG c d) = transportf _ (triangle_id_right_ad A _ )
-                                            ((ηη _ _ ;; (# GG) (εε _ _)) %mor_disp)).
-      { apply transportf_transpose.
-        rewrite (pr2 (pr2 X)).
-        simpl.
-        apply idpath. }
       (* this is tedious... *)
       assert (triangle2 : (ηη (G c) (GG c d);; # GG (εε c d)) =
                           transportb _ (triangle_id_right_ad A c) (id_disp _))
@@ -220,18 +214,40 @@ Proof.
       simpl in triangle2.
       fold G in triangle2.
       rewrite (transportf_transpose _ _ _ (pathsinv0 triangle2)).
+      rewrite 2 mor_disp_transportf_prewhisker.
       set (nat := disp_nat_trans_ax_var εε ff).
       simpl in nat.
       simpl in p.
       rewrite nat in p.
-
+      rewrite mor_disp_transportf_prewhisker in p.
+      rewrite assoc_disp in p.
+      rewrite <- disp_functor_comp_var in p.
+      rewrite mor_disp_transportf_postwhisker in p.
+      unfold transportb in p.
+      rewrite 3 transport_f_f in p.
+      apply (maponpaths (# GG)) in p.
+      rewrite 2 disp_functor_transportf in p.
+      rewrite disp_functor_comp in p.
+      unfold transportb in p.
+      rewrite transport_f_f in p.
+      apply (maponpaths (comp_disp (ηη _ _))) in p.
+      rewrite mor_disp_transportf_prewhisker in p.
+      
+      rewrite 2 assoc_disp.
+      unfold transportb.
+      rewrite 4 transport_f_f.
+      set (nateta := disp_nat_trans_ax ηη (gg ;; # GG ff)).
+      simpl in nateta.
+      rewrite nateta.
+      unfold transportb.
+      rewrite mor_disp_transportf_postwhisker.
+      rewrite transport_f_f.
+      
    FF gg ; eps ; ff = FF h ; eps
    FF gg ; FF GG ff ; eps = FF h ; eps
    FF (gg ; GG ff) ; eps = FF h ; eps
-   FF (gg ; GG ff) ; eps = FF h ; eps
    GG FF (gg ; GG ff) ; GG eps = GG FF h ; GG eps
-   GG FF (gg ; GG ff) ; GG eps = GG FF h ; GG eps
-   eta ; GG FF (gg ; GG ff) ; GG eps = eta ; GG FF h ; GG eps
+    eta ; GG FF (gg ; GG ff) ; GG eps = eta ; GG FF h ; GG eps
    eta ; GG FF (gg ; GG ff) ; GG eps = h ; eta ; GG eps = h
    eta ; GG FF (gg ; GG ff) ; GG eps = h
    gg ; GG ff ; eta ; GG eps = h
