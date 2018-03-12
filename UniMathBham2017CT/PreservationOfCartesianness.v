@@ -1,3 +1,13 @@
+(**
+  Contents:
+  - Definition of homset correspondences for a displayed adjunction.
+  - Homset correspondences are weak equivalences. 
+  - The right adjoint functor of a displayed adjunction preserves cartesian morphisms.
+
+  Written by Tamara von Glehn and Noam Zeilberger at the School and Workshop on 
+  Univalent Mathematics, December 2017
+*)
+
 Require Import UniMath.Foundations.Sets.
 Require Import UniMath.MoreFoundations.PartA.
 Require Import UniMath.CategoryTheory.Categories.
@@ -35,6 +45,9 @@ Let εε : disp_nat_trans ε (disp_functor_composite GG FF) (disp_functor_identi
 Local Open Scope hide_transport_scope.
 
 Section DispHomSetIso_from_Adjunction.
+
+  (* Naming: homset_conj_inv lies over φ_adj_inv and has inverse homset_conj,
+     homset_conj' lies over φ_adj and has inverse homset_conj'_inv. *)
   
   Definition homset_conj_inv {c : C} {c' : C'} (g : C⟦c, G c'⟧) (d : D c) (d' : D' c') :
       (d -->[g] GG _ d') -> (FF _ d -->[#F g ·  ε _] d') :=
@@ -59,11 +72,27 @@ Section DispHomSetIso_from_Adjunction.
                 : η c · # G (# F g · ε c') = g).
     exact (λ beta, transportf _  equiv (homset_conj' _ _ _ beta)).
   Defined.
-  
 
+  (** * Naturality of homset bijections *)
+  
   Open Scope mor_disp.
 
-  Lemma homset_conj_inv_natural_postcomp {c : C} {c' : C'} {g : C⟦c, G c'⟧} {c'' : C'}
+  Lemma homset_conj_inv_natural_precomp {c : C} {c' : C'} {g : C⟦c, G c'⟧} {c'' : C}
+      {f : C⟦c'', c⟧} {d : D c} {d' : D' c'} {d'' : D c''}
+      (gg : d -->[g] GG _ d') (ff : d'' -->[f] d) :
+    homset_conj_inv _ _ _ (ff ;; gg)  =
+    transportb _ (φ_adj_inv_natural_precomp A _ _ g _ f) (# FF ff ;; homset_conj_inv _ _ _ gg).
+  Proof.
+    unfold homset_conj_inv.
+    rewrite disp_functor_comp.
+    rewrite assoc_disp.
+    unfold transportb.
+    rewrite mor_disp_transportf_postwhisker.
+    rewrite transport_f_f.
+    apply maponpaths_2, homset_property.
+  Defined.
+  
+    Lemma homset_conj_inv_natural_postcomp {c : C} {c' : C'} {g : C⟦c, G c'⟧} {c'' : C'}
       {f : C'⟦c', c''⟧} {d : D c} {d' : D' c'} {d'' : D' c''}
       (gg : d -->[g] GG _ d') (ff : d' -->[f] d'') :
     homset_conj_inv _ _ _ (gg ;; # GG ff)  =
@@ -103,6 +132,21 @@ Section DispHomSetIso_from_Adjunction.
     apply maponpaths_2, homset_property.   
   Defined.
 
+  Lemma homset_conj'_natural_postcomp {c : C} {c' : C'} {f : C'⟦F c, c'⟧} {c'' : C'}
+        {k : C'⟦c', c''⟧} {d : D c} {d' : D' c'} {d'' : D' c''}
+        (ff : FF _ d -->[f] d') (kk : d' -->[k] d'') :
+    homset_conj' _ _ _ (ff ;; kk) =
+    transportb _ (φ_adj_natural_postcomp A _ _ f _ k) (homset_conj' _ _ _ ff ;; # GG kk).
+  Proof.
+    unfold homset_conj'.
+    rewrite disp_functor_comp.
+    rewrite assoc_disp_var.
+    unfold transportb.
+    rewrite mor_disp_transportf_prewhisker.
+    rewrite transport_f_f.
+    apply maponpaths_2, homset_property.
+  Defined.
+  
   Lemma homset_conj_inv_after_conj' {c : C} {c' : C'} (f : C'⟦F c, c'⟧)(d : D c) (d' : D' c')
         (beta : FF _ d -->[f] d') :
     transportf _ (φ_adj_inv_after_φ_adj A f) 
@@ -157,6 +201,8 @@ Section DispHomSetIso_from_Adjunction.
   Defined.
 
   Close Scope mor_disp.
+
+  (** * homset_conj_inv and homset_conj' are weak equivalences. *)
   
   Lemma homset_conj_after_conj_inv {c : C} {c' : C'} {g : C⟦c, G c'⟧} {d : D c} (d' : D' c')
         (alpha : d -->[g] GG _ d') :
@@ -214,6 +260,8 @@ Section DispHomSetIso_from_Adjunction.
   Defined.
   
 End DispHomSetIso_from_Adjunction.
+
+(** * The right adjoint functor of a displayed adjunction preserves cartesian morphisms. *)
 
 Lemma right_over_adj_preserves_cartesianness : is_cartesian_disp_functor GG.
 Proof.
